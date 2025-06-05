@@ -1,0 +1,30 @@
+atcoder 219 D
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int main(){
+  int n,x,y;
+  cin>>n>>x>>y;
+  vector<int> a(n),b(n);
+  for(int i=0;i<n;i++) cin>>a[i]>>b[i];
+  int dp[301][301][301];
+  for(int i=0;i<=300;i++){
+    for(int j=0;j<=300;j++){
+      for(int k=0;k<=300;k++) dp[i][j][k]=2e9;
+    }
+  }
+  dp[0][0][0]=0;
+  for(int i=0;i<n;i++){
+    for(int j=0;j<=x;j++){
+      for(int k=0;k<=y;k++){
+        if(dp[i][j][k]<2e9){
+          dp[i+1][j][k]=min(dp[i+1][j][k],dp[i][j][k]);
+          dp[i+1][min(j+a[i],x)][min(k+b[i],y)]=min(dp[i+1][min(j+a[i],x)][min(k+b[i],y)],dp[i][j][k]+1);
+        }
+      }
+    }
+  }
+  if(dp[n][x][y]==2e9) cout<<-1;
+  else cout<<dp[n][x][y]<<endl;
+}
