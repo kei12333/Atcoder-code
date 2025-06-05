@@ -1,0 +1,27 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+const int mod=998244353;
+int main(){
+  int n;
+  cin>>n;
+  vector<int> a(n);
+  for(int i=0;i<n;i++) cin>>a[i];
+  long long dp[n][10];
+  for(int i=0;i<n;i++){
+    for(int j=0;j<10;j++) dp[i][j]=0;//初期化//
+  }
+  dp[0][a[0]]++;
+  for(int i=1;i<n;i++){
+    for(int j=0;j<10;j++){
+      if(dp[i-1][j]>0){
+        dp[i][(j+a[i])%10]+=dp[i-1][j];//足し算の場合の遷移//
+        dp[i][(j*a[i])%10]+=dp[i-1][j];//掛け算の場合の遷移//
+        dp[i][(j+a[i])%10]%=mod;//余り//
+        dp[i][(j*a[i])%10]%=mod;//余り//
+        
+      }
+    }
+  }
+  for(int i=0;i<=9;i++) cout<<dp[n-1][i]<<endl;
+}
