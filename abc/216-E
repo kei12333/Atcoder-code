@@ -1,0 +1,33 @@
+atcoder 216 E問題 https://atcoder.jp/contests/abc216/tasks/abc216_e
+
+//この問題は貪欲法で解ける//
+
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+int main(){
+  long long n,k;
+  cin>>n>>k;
+  long long ans=0;
+  vector<long long> a(n+1);
+  for(int i=0;i<n;i++) cin>>a[i];
+  a[n]=0;//一番最後を0に設定
+  sort(a.rbegin(),a.rend());//大きい順にならべる
+  long long pos=1;
+  while(pos<=n&&k>0){//配列の位置がnより小さいとき、またはアトラクションに乗った回数を超えたら終了
+    long long n=a[pos-1]-a[pos];//配列の一個先に注目する　一個後ろを超えないぎりぎりまでなら今見てる配列が一番大きい
+    ans+=(n*(a[pos]+1+a[pos-1])/2)*pos;//数列の和の公式　また、足すべき数列の個数がが増えていくことに注意
+    k-=n*pos;//アトラクションに乗った回数を更新
+    pos++;
+  }
+  if(k<0){//アトラクションに乗った回数が負になるなら乗りすぎなので調整が必要
+    long long b=abs(k)/(pos-1),c=abs(k)%(pos-1);// 割り算の商が項数になり、余ったやつはそのまま足せばよい
+    ans-=b*(a[pos-1]+1+a[pos-1]+b)/2*(pos-1);
+    for(int i=0;i<c;i++) ans-=(a[pos-1]+b+1);//余ったやつを調整
+  }
+  cout<<ans<<endl;
+}
+
+例えば{102,100,50}だったら
+{102,100,50}→100,100,50}→50,50,50}という風に変換するので　2個めから３個目は51から１００までの和を２回やることになる
