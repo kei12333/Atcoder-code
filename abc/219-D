@@ -1,30 +1,64 @@
-atcoder 219 D
+atcoder 219 D問題　https://atcoder.jp/contests/abc219/tasks/abc219_d
 
+問題のポイント (Strange Lunchbox)
+動的計画法を考える。→おすすめの解説記事 https://qiita.com/drken/items/a5e6fe22863b7992efdb
+今回注目すべきポイントはN,X,Yの制約である。300と非常に小さくなっている。これならdp[i][j][k]と三次元配列でループしても十分間に合う。
+また、足していく中でたこ焼きとタイ焼きの数が300を超えるものが出てくる可能性があり、状態数が増えてしまうが、X,Yを超えた分についはどうでもいいので、超えた分に関してはX,Y無視してX,Yの状態にすればよい。
+動的計画法を考えるときに、iを要素数、jをたこ焼きの数、kをたこ焼きの数として状態を保存しdp[i][j][k]=買った個数にすればよい。dp[i][j][k]の初期値にとても大きい数(2*10^9など)を入れておいて,、もしdp[n][X][Y]がこの数だったら-1を出力し、異なる結果だったらdp[i][j][k]を出力すればよい。
+
+遷移の仕方
+その要素を選ばない dp[i+1][j][k] = min(dp[i+1][j][k], dp[i][j][k]);
+その要素を選ぶ　dp[i+1][min(j+A[i],X)][min(k+B[i],Y)]=min(dp[i][min(j+A[i],X)][min(k+B[i],Y)],dp[i][j][k]+1)
+
+自分のコード
 #include<iostream>
 #include<vector>
 using namespace std;
+
 int main(){
-  int n,x,y;
-  cin>>n>>x>>y;
-  vector<int> a(n),b(n);
-  for(int i=0;i<n;i++) cin>>a[i]>>b[i];
+  int n, x, y;
+  cin >> n >> x >> y; // ランチボックスの種類数と目標のたこ焼き・たい焼きの数
+
+  vector<int> a(n), b(n); // a[i]: i番目のランチボックスに入っているたこ焼きの数
+                          // b[i]: i番目のランチボックスに入っているたい焼きの数
+  for(int i = 0; i < n; i++) cin >> a[i] >> b[i];
+
+  // dp[i][j][k] =
+  //   最初のi個のランチボックスから選んで
+  //   たこ焼きをj個、たい焼きをk個集めるのに必要な最小個数
   int dp[301][301][301];
-  for(int i=0;i<=300;i++){
-    for(int j=0;j<=300;j++){
-      for(int k=0;k<=300;k++) dp[i][j][k]=2e9;
+
+  // 配列を大きな値で初期化（初期値：不可能な状態）
+  for(int i = 0; i <= 300; i++){
+    for(int j = 0; j <= 300; j++){
+      for(int k = 0; k <= 300; k++){
+        dp[i][j][k] = 2e9; // 十分大きい値にする
+      }
     }
   }
-  dp[0][0][0]=0;
-  for(int i=0;i<n;i++){
-    for(int j=0;j<=x;j++){
-      for(int k=0;k<=y;k++){
-        if(dp[i][j][k]<2e9){
-          dp[i+1][j][k]=min(dp[i+1][j][k],dp[i][j][k]);
-          dp[i+1][min(j+a[i],x)][min(k+b[i],y)]=min(dp[i+1][min(j+a[i],x)][min(k+b[i],y)],dp[i][j][k]+1);
+
+  dp[0][0][0] = 0; // 0個のランチボックスで たこ焼き0個 たい焼き0個は 0個必要
+
+  // ランチボックスを順番に1つずつ見ていく
+  for(int i = 0; i < n; i++){
+    for(int j = 0; j <= x; j++){
+      for(int k = 0; k <= y; k++){
+        // 現在の状態が可能であれば
+        if(dp[i][j][k] < 2e9){
+          // 1. 今のランチボックスを選ばない場合
+          dp[i+1][j][k] = min(dp[i+1][j][k], dp[i][j][k]);
+
+          // 2. 今のランチボックスを選ぶ場合
+          // たこ焼き・たい焼きの数が目標以上にならないようにminでカット
+          int nj = min(j + a[i], x);
+          int nk = min(k + b[i], y);
+          dp[i+1][nj][nk] = min(dp[i+1][nj][nk], dp[i][j][k] + 1);
         }
       }
     }
   }
-  if(dp[n][x][y]==2e9) cout<<-1;
-  else cout<<dp[n][x][y]<<endl;
+
+  // 最終的に目標を達成できるかどうか
+  if(dp[n][x][y] == 2e9) cout << -1; // 不可能
+  else cout << dp[n][x][y] << endl;  // 最小の個数を出力
 }
