@@ -1,0 +1,81 @@
+atcoder 217 E問題　https://atcoder.jp/contests/abc217/tasks/abc217_e
+
+問題のポイント（ABC217 E - Sorting Queries）
+クエリが3種類ある
+ 2×10⁵ なので、毎回 sort() をすると間に合わない！
+
+「sort しないで昇順を管理する方法」
+　昇順管理 → set を使う！
+
+setは勝手に小さい順に並べてくれる
+
+最小値は set.begin() で一瞬で取れる
+でも！
+sort クエリが来るまで順番を保つ必要がある！
+
+例えば、set だけに入れると順番が崩れてしまい、
+sort 前に先頭の要素が分からなくなる。
+
+まだソートしていない部分 は vector にそのまま追加する！
+
+→ソート済みの部分 は set に入れておく！
+
+各クエリで何をするか
+		
+1	数字を追加 → vector に追加	vector
+2	先頭の数字を出力して削除	set と vector
+3	vector に残ってる数字を全部 set に移動して、vector を空にする	set と vector
+
+先頭の数字をどう管理する？
+set に要素があるなら、必ずそっちの最小値を使う（ソート済み部分）
+set が空なら、vector の先頭から順番に出力する（ソート前部分）
+set は同じ数字が複数あると1個しか持てないので
+map で「同じ値が何回入ったか」を管理する！
+
+
+#include<iostream>
+#include<set>
+#include<map>
+#include<vector>
+using namespace std;
+
+int main(){
+  int q, pos = 0; // pos は vector の現在の先頭位置
+  cin >> q;
+
+  map<int,int> p; // set の要素の個数を数える
+  set<int> ans;   // 昇順管理
+  vector<int> t;  // ソートしてない部分
+
+  while(q--){
+    int c;
+    cin >> c;
+
+    if(c == 1){
+      int x; cin >> x;
+      t.push_back(x); // ソートしてない部分に追加
+    }
+
+    if(c == 2){
+      if(ans.size() > 0){
+        auto it = ans.begin(); // ソート済み部分の最小
+        cout << *it << endl;
+        p[*it]--; // 個数を減らす
+        if(p[*it] == 0) ans.erase(*it); // 0 なら削除
+      }
+      else{
+        cout << t[pos] << endl; // ソートしてない部分の先頭
+        pos++;
+      }
+    }
+
+    if(c == 3){
+      for(int i = pos; i < t.size(); i++){
+        ans.insert(t[i]);
+        p[t[i]]++; // 個数を数える
+      }
+      t.clear(); // vector は空に
+      pos = 0;   // pos もリセット
+    }
+  }
+}
