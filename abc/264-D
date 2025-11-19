@@ -1,0 +1,28 @@
+264-D
+
+ポイント
+atcoderという文字列を作ってそれと比較することが大事だ。例えばatcoderとctaoderだったらaは1文字目と3文字目にいるので3-1=2回となる。
+これを求めるときにaを前に持ってくるのでcとtは一文字後ろに下がることに注意する。
+
+#include<iostream>
+#include<vector>
+#include<map>
+using namespace std;
+int main(){
+  string s;
+  cin>>s;
+  map<char,int> p;
+  for(int i=0;i<7;i++) p[s[i]]=i;
+  string t="atcoder";
+  int ans=0;
+  for(int i=0;i<7;i++){
+    for(int j=0;j<7;j++){
+      if(t[i]==s[j]){
+        ans+=(p[s[j]]-i);
+        break;
+      }
+      else p[s[j]]++;//一文字さがる
+    }
+  }
+  cout<<ans<<endl;
+}
