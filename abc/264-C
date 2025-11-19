@@ -1,0 +1,46 @@
+264-C
+
+ポイント
+この問題は一見難しそうに見えるかもしれないがあることに気づけばそうでもない。制約が10以下と少ないことからbit全探索が思いつくだろう。
+よってbit全探索で縦と横を消すか消さないかを決めればよい。そのあとにBの配列と一致するかを確かめれば解くことができる。
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int main(){
+  int h1,w1,h2,w2;
+  cin>>h1>>w1;
+  vector<vector<int>> a(h1,vector<int>(w1));
+  for(int i=0;i<h1;i++){
+    for(int j=0;j<w1;j++) cin>>a[i][j];
+  }
+  cin>>h2>>w2;
+  vector<vector<int>> b(h2,vector<int>(w2));
+  for(int i=0;i<h2;i++){
+    for(int j=0;j<w2;j++) cin>>b[i][j];
+  }
+  for(int i=0;i<(1<<h1);i++){
+    vector<int> tate;
+    for(int j=0;j<h1;j++){
+      if(i&1<<j) tate.push_back(j);
+    }
+    for(int j=0;j<(1<<w1);j++){
+      vector<int> yoko;
+      for(int k=0;k<w1;k++){
+        if(j&1<<k) yoko.push_back(k);
+      }
+      if((int)tate.size()!=h2||(int)yoko.size()!=w2) continue;
+      bool ok=true;
+      for(int k=0;k<(int)tate.size();k++){
+        for(int l=0;l<(int)yoko.size();l++){
+          if(b[k][l]!=a[tate[k]][yoko[l]]) ok=false;
+        }
+      }
+      if(ok==true){
+        cout<<"Yes";
+        return 0;
+      }
+    }
+  }
+  cout<<"No";
+}
