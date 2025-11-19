@@ -1,0 +1,44 @@
+263-D
+
+ポイント　
+片方を固定化できるか
+今回の問題では左右が動いていくので一気に考えることは難しい。そこで片方を固定しもう片方を動かすことで単純に考えるようにする。このように考えたら、右から何番目までをrに置き換えれば最小になるかに帰着できる(左の番号より小さくならないことが条件)。
+→つまり左をi,右をjとするとi=1のとき右はj=n-1,n-2...2までrに置き換えれることを意味する。
+
+右からの累積和を考えれるか　
+左を固定し右を動かすときに毎回一から和を考えては時間オーバーしてしまう。そこで事前に累積和を考えていく必要がある。今回ではどこまでrに置き換えれるかという話なので、右から1番目を置き換えた場合、2番目までを置き換えた場合.....左の固定化した番号+1を繰り返して配列にどこまで置き換えたかという情報と一緒に保存する。そして、それを小さい順に並べることで、今固定化した左側の番号i番目での最小の和を考えることができる。これをi=0～n-1まで繰り返す。番号を保存する意味はもし、固定した左側よりも小さい番号に行ってしまう場合を防ぐためである。左側に行ってしまったら保存した配列を次の要素にすればよいだけである。
+
+
+
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+int main(){
+  long long n,l,r;
+  cin>>n>>l>>r;
+  vector<int> a(n);
+  for(int i=0;i<n;i++) cin>>a[i];
+  vector<pair<long long,int>> p;//累積和と番号の情報を入れる
+  long long s=0,ans=0;
+  for(int i=0;i<n;i++) s+=a[i];
+  p.push_back({s,n});
+  for(int i=n-1;i>=0;i--){
+    s-=a[i];
+    s+=r;
+    p.push_back({s,i});//右からj番目までrで置き換えたときの類s系は
+  }
+  sort(p.begin(),p.end());
+  ans=p[0].first;
+  long long tmp=0,pos=0,S=0;
+  for(int i=0;i<n;i++){
+    tmp+=l;
+    while(true){
+      if(p[pos].second<=i) pos++;
+      else break;
+    }
+    S+=a[i];
+    ans=min(ans,tmp+p[pos].first-S);
+  }
+  cout<<ans<<endl;
+}
