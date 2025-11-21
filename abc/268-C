@@ -1,0 +1,33 @@
+268-C
+
+ポイント
+この問題は全部回転させようとすると間に合わない。そこでp[i]=aとすると、p[i]をa-1,a,a+1番目の位置まで回転させればよいことに気づく
+(この場所以外の回転は条件を満たさないので意味ない)
+よってこの三つの場所に行くまでに何回回転させればよいかを求め記録しておき、最後に回転回数における条件を満たした数の最大値を求めればよい
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int main(){
+  int n;
+  cin>>n;
+  vector<int> p(n);
+  for(int i=0;i<n;i++) cin>>p[i];
+  vector<int> ans(n+1,0);
+  for(int i=0;i<n;i++){
+    int a=p[i]-1,b=p[i],c=p[i]+1;
+    if(a<0) a=n-1;
+    if(c>=n) c=0;
+    if(i<=a) ans[a-i]++;
+    else ans[(n-1-i)+a+1]++;
+    if(i<=b) ans[b-i]++;
+    else ans[(n-1-i)+b+1]++;
+    if(i<=c) ans[c-i]++;
+    else ans[(n-1-i)+c+1]++;
+  }
+  int tmp=0;
+  for(int i=0;i<=n;i++){
+    tmp=max(tmp,ans[i]);
+  }
+  cout<<tmp<<endl;
+}
