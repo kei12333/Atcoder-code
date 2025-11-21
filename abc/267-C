@@ -1,0 +1,30 @@
+267-C
+
+ポイント
+m個の連続部分列と指定されているので、もしm以下だったらi*a[i]を足していき、m以上になったらその時の和を最大値と比較してから、
+i項目からi+m-1項目までの累積和を引き算し,a[i+m]*mを足し算する必要がある。
+例えば、0からm-1までのm個の連続部分列から1からmまでの連続部分列になった時を考える。始めはa[0]*1+a[1]*2...a[m-1]*mとなっていたが、
+次はa[1]*1+a[2]*2+...a[m]*mとなる。ここで注目するのがちょうどa[0]+a[1]+...a[m]の和の分だけ減少しa[m]*mだけ増えていることだ。
+つまり、次の連続部分列に移行するときにiからi+m-1までの和を記録すればよい。
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int main(){
+  int n,m;
+  cin>>n>>m;
+  vector<long long> a(n);
+  for(int i=0;i<n;i++) cin>>a[i];
+  long long ans=-2e18;
+  long long tmp=0,s=0;
+  for(int i=0;i<n;i++){
+    tmp+=min(i+1,m)*a[i];
+    s+=a[i];//和の記録
+    if(i>=m-1){
+      ans=max(ans,tmp);
+      tmp-=s;
+      s-=a[i-(m-1)];
+    }
+  }
+  cout<<ans<<endl;
+}
