@@ -1,0 +1,29 @@
+267-D
+
+ポイント
+この問題は典型的なナップザック問題である。数列を前から見ていってその数字をとるかとらないかでdpを考えればよい。dpの遷移の仕方としては
+dp[i+1][j+1]=max(dp[i][j]+(j+1)*a[i],dp[i+1][j+1]) 数字を選ぶ
+dp[i+1][j]max(dp[i+1][j],dp[i][j]) 数字を選ばない
+である。また、今回は負の数も含まれているので初期値を0にすると間違えてしまうので注意
+
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int main(){
+  int n,m;
+  cin>>n>>m;
+  vector<long long> a(n);
+  for(int i=0;i<n;i++) cin>>a[i];
+  vector<vector<long long>> dp(n+1,vector<long long>(n+1,-2e18));
+  dp[0][0]=0;
+  for(int i=0;i<n;i++){
+    for(int j=0;j<n;j++){
+      dp[i+1][j]=max(dp[i][j],dp[i+1][j]);
+      if(dp[i][j]!=-2e18) dp[i+1][j+1]=dp[i][j]+(j+1)*a[i];
+    }
+  }
+  long long ans=-2e18;
+  for(int i=0;i<=n;i++) ans=max(ans,dp[i][m]);
+  cout<<ans<<endl;
+}
