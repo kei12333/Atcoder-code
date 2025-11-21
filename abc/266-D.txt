@@ -1,0 +1,39 @@
+266-D
+
+ポイント
+この問題はdpを使って解くことができる。次の状態が前の状態だけで決まるからである。
+座標が0～4まであり、速さが1以下なので例えば1の座標にいたときは0～2に移動できることになる。
+このことをdpで表すとdp[i-1][0],dp[i-1][1],dp[i-1][2]からdp[i][1]移動できるということになる。
+最大値を求めるので3つのパターンに対してa[i]を足してmaxをとればよい(ただしその時間に来た時だけ)。
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int main(){
+  int n;
+  cin>>n;
+  vector<long long> t(n),x(n),a(n);
+  for(int i=0;i<n;i++) cin>>t[i]>>x[i]>>a[i];
+  vector<vector<long long>> dp(100001,vector<long long>(5,0));
+  int pos=0;
+  for(int i=1;i<=100000;i++){
+    bool ok=false;
+    for(int j=0;j<=min(i,4);j++){
+      if(i==t[pos]) ok=true;
+      if(pos<n&&i==t[pos]&&j==x[pos]){
+        if(j!=0) dp[i][j]=max(dp[i-1][j-1]+a[pos],dp[i][j]);
+        if(j!=4&&i>j+1) dp[i][j]=max(dp[i-1][j+1]+a[pos],dp[i][j]);
+        if(i>j)dp[i][j]=max(dp[i-1][j]+a[pos],dp[i][j]);
+      }
+      else{
+        if(j!=0) dp[i][j]=max(dp[i-1][j-1],dp[i][j]);
+        if(j!=4&&i>j+1) dp[i][j]=max(dp[i-1][j+1],dp[i][j]);
+        if(i>j) dp[i][j]=max(dp[i-1][j],dp[i][j]);
+      }
+    }
+    if(ok==true) pos++;
+  }
+  long long ans=0;
+  for(int i=0;i<5;i++) ans=max(ans,dp[100000][i]);
+  cout<<ans<<endl;
+}
