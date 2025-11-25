@@ -1,0 +1,44 @@
+272-D
+
+ポイント
+この問題はそれぞれの座標に対して全探索をすると時間に間に合わない。よって事前に今の座標からルートMになる座標を求める必要がある。
+この求め方としてはまず初めにi*i+j*j=mになる(i,j)を求める。これを求めることができたら、今のいる座標に(i,j)を足せば必然的に
+距離がルートMになる座標を求めることができる。理由としては(a,b)から(a+i,b+j)に移動するので求める距離はi*i+j*jとなる。
+よってi*i+j*j=mになるものを別の配列に入れておけば求めることができる。
+
+#include<iostream>
+#include<vector>
+#include<queue>
+using namespace std;
+int main(){
+  int n,m;
+  cin>>n>>m;
+  vector<pair<int,int>> p;
+  for(int i=-n+1;i<n;i++){
+    for(int j=-n+1;j<n;j++){
+      if(i*i+j*j==m) p.push_back({i,j});
+    }
+  }
+  queue<pair<int,int>> q;
+  vector<vector<int>> visited(n,vector<int>(n,-1));
+  visited[0][0]=0;
+  q.push({0,0});
+  while(q.size()){
+    auto [a,b]=q.front();
+    q.pop();
+    for(int i=0;i<(int)p.size();i++){
+      int x=a+p[i].first,y=b+p[i].second;
+      if(0<=x&&x<n&&0<=y&&y<n&&visited[x][y]==-1){
+        visited[x][y]=visited[a][b]+1;
+        q.push({x,y});
+      }
+    }
+  }
+  for(int i=0;i<n;i++){
+    for(int j=0;j<n;j++){
+      cout<<visited[i][j];
+      if(j!=n-1) cout<<" ";
+    }
+    cout<<endl;
+  }
+}
