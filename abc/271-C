@@ -1,0 +1,42 @@
+271-C
+
+ポイント
+この問題は複数ある本をどうするか、または本の番号を連続させるためにどのように本の番号が大きいやつを消していくかの問題である。
+本が複数あるやつは初めに数えておけばよい(変数をsoldなどにする)。また、本の番号を1から順番に探索するときにl番目で番号の連続が途切れたときに、
+もしsoldが2以上あるならsoldから2つ取り出して新しい番号を作る。もしsoldが2より小さいなら上から順番に見る変数をrとすると
+a[r]をsoldに加えればよい。
+まとめると次のようになる。
+下から見る変数をl,上から見る変数をrとすると初めはlを１から動かして連続しないところまで見る。次に上からrを動かして存在する一番大きい本の番号まで見る。
+そのあとにsoldが２以上ならsoldから２を引いてlを１進める。もし２より小さいなら今持ってる一番大きい番号rを使いsolに１を足すようにし、rを１小さくすればよい。
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int main(){
+  int n;
+  cin>>n;
+  vector<int> a(n);
+  vector<bool> t(n+2,false);
+  int sold=0;
+  for(int i=0;i<n;i++){
+    cin>>a[i];
+    if(a[i]>=(int)t.size()) sold++;
+    else if(t[a[i]]) sold++;
+    else t[a[i]]=true;
+  }
+  int l=1,r=n+1;
+  while(true){
+    while(t[l]) l++;
+    while(r!=0&&!t[r]) r--;
+    if(sold>=2){
+      t[l]=true;
+      sold-=2;
+    }
+    else{
+      if(l>=r) break;
+      t[r]=false;
+      sold++;
+    }
+  }
+  cout<<l-1<<endl;
+}
