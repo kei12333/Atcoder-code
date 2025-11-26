@@ -1,0 +1,67 @@
+273-D
+
+ポイント
+この問題はH,Wの制約が大きいので、毎回その場で障害物があるかないかの確認をして進める方針はできない。
+そこで、進む方向にある最小の障害物のある場所が一回で見つかる方法はないかを考える。それを実現するのは障害物のある座標を連想配列などに入れ
+二分探索をする方法だ。あるx座標にある障害物とあるy座標にある障害物を入れる連想配列をp,tとする。
+p[cs]={0,3,6,9}(csというy座標にx=0,3,6,9において障害物がある)のとき、もし自分が4にいてDに5進むとすると、
+lower_boundをすることにより次の障害物の位置は6だと一気に求めることができる。
+
+#include<iostream>
+#include<vector>
+#include<map>
+#include<set>
+#include<algorithm>
+using namespace std;
+int main(){
+  int h,w,rs,cs,n,q;
+  cin>>h>>w>>rs>>cs>>n;
+  map<int,set<int>> p,t;
+  for(int i=0;i<n;i++){
+    int r,c;
+    cin>>r>>c;
+    p[c].insert(r);
+    t[r].insert(c);
+  }
+  cin>>q;
+  for(int i=0;i<q;i++){
+    char d;
+    int l;
+    cin>>d>>l;
+    if(d=='U'){
+      auto it=p[cs].lower_bound(rs);
+      if(it==p[cs].begin()) rs=max(1,rs-l);
+      else{
+        it--;
+        if(rs-*it-1>=l) rs-=l;
+        else rs-=(rs-*it-1);
+      }
+    }
+    if(d=='D'){
+      auto it=p[cs].lower_bound(rs);
+      if(it==p[cs].end()) rs=min(h,rs+l);
+      else{
+        if(*it-rs-1>=l) rs+=l;
+        else rs+=(*it-rs-1);
+      }
+    }
+    if(d=='R'){
+      auto it=t[rs].lower_bound(cs);
+      if(it==t[rs].end()) cs=min(w,cs+l);
+      else{
+        if(*it-cs-1>=l) cs+=l;
+        else cs+=(*it-cs-1);
+      }
+    }
+    if(d=='L'){
+      auto it=t[rs].lower_bound(cs);
+      if(it==t[rs].begin()) cs=max(1,cs-l);
+      else{
+        it--;
+        if(cs-*it-1>=l) cs-=l;
+        else cs-=(cs-*it-1);
+      }
+    }
+    cout<<rs<<" "<<cs<<endl;
+  }
+}
