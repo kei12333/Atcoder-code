@@ -1,0 +1,24 @@
+275-D
+
+ポイント
+この問題は再起を用いることである。しかし、普通に再起を用いていも間に合わないのでメモ化再帰というテクニックを用いる。
+例えばf(100)というものが何回も出てくるとそのたびに計算するのは時間の無駄である。
+そこでp[100]に値を保存しておいて、もしf(100)がもう一回出てきたら計算せずにp[100]を返せばf(100)の計算は一回で済む。
+
+#include<iostream>
+#include<map>
+using namespace std;
+int main(){
+  map<long long,long long> p;
+  long long n;
+  cin>>n;
+  long long ans=0;
+  auto f=[&](auto f,long long pos)->long long{
+    if(pos==0) return 1;
+    if(p[pos]>0) return p[pos];
+    return p[pos]=f(f,pos/2)+f(f,pos/3);
+  };
+  if(n==0) ans=1;
+  else ans=f(f,n/2)+f(f,n/3);
+  cout<<ans<<endl;
+}

@@ -1,0 +1,45 @@
+275-C
+
+ポイント
+この問題は4つの点を全探索すると間に合わないので、二つの点を全探索して正方形を作ることに着目する。
+二つの点さえ決まってしまえばあとはベクトルの考え方で正方形を解くことができる。
+例えば二つの点をA(x1,y1),B(x2,y2)とすると、dx=x1-x2,dy=y1-y2とすると、
+それぞれの座標にdxを足して(y座標)dyを引いた(x座標)位置かdxを引いて(y座標)dyを足した(x座標)位置が'#'になっていれば正方形である。
+この理由については正方形は点A,Bをそれぞれ右回り、左回りに90度回転させればよ正方形になるからである。
+しかし、このやり方だと同じ正方形が8回数えらえるので8で割る必要がある。
+
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int main(){
+  vector<string> s(9);
+  int ch[9][9][9][9];
+  int ans=0;
+  for(int i=0;i<9;i++){
+    for(int j=0;j<9;j++){
+      for(int k=0;k<9;k++){
+        for(int l=0;l<9;l++) ch[i][j][k][l]=false;
+      }
+    }
+  }
+  for(int i=0;i<9;i++) cin>>s[i];
+  for(int i=0;i<9;i++){
+    for(int j=0;j<9;j++){
+      for(int k=0;k<9;k++){
+        for(int l=0;l<9;l++){
+          if(i==k&&j==l) continue;
+          if(s[i][j]!='#'||s[k][l]!='#') continue;
+          int x=k-i,y=l-j;
+          if(i-y>=0&&i-y<9&&j+x>=0&&j+x<9&&k-y>=0&&k-y<9&&l+x>=0&&l+x<9){
+            if(s[i-y][j+x]=='#'&&s[k-y][l+x]=='#') ans++;
+          }
+          if(i+y>=0&&i+y<9&&j-x>=0&&j-x<9&&k+y>=0&&k+y<9&&l-x>=0&&l-x<9){
+            if(s[i+y][j-x]=='#'&&s[k+y][l-x]=='#') ans++;
+          }
+        }
+      }
+    }
+  }
+  cout<<ans/8<<endl;
+}
