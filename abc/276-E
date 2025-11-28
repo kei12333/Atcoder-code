@@ -1,0 +1,57 @@
+276-E
+
+ポイント
+この問題は見方を変えれば思いつくだろう。Sから出発してSに戻るのだが、ここでSの周りの4つの位置からほかの3つの位置に帰ってこれるかを考えればよい。
+つまり、Sの周りの位置からBFSを初めてほかの周りの位置に帰ってこれればYES,そうでなければNOにする。
+
+#include<iostream>
+#include<vector>
+#include<queue>
+using namespace std;
+int main(){
+  int h,w;
+  cin>>h>>w;
+  vector<string> c(h);
+  vector<int> di={1,0,-1,0},dj={0,1,0,-1};
+  for(int i=0;i<h;i++) cin>>c[i];
+  int x=0,y=0;
+  for(int i=0;i<h;i++){
+    for(int j=0;j<w;j++){
+      if(c[i][j]=='S'){
+        x=i,y=j;
+      }
+    }
+  }
+  vector<pair<int,int>> p;
+  if(x-1>=0&&c[x-1][y]=='.') p.push_back({x-1,y});
+  if(x+1<h&&c[x+1][y]=='.')  p.push_back({x+1,y});
+  if(y-1>=0&&c[x][y-1]=='.') p.push_back({x,y-1});
+  if(y+1<w&&c[x][y+1]=='.') p.push_back({x,y+1});
+  for(int i=0;i<(int)p.size()-1;i++){
+    for(int j=i+1;j<(int)p.size();j++){
+      int start_x=p[i].first,start_y=p[i].second;
+      int end_x=p[j].first,end_y=p[j].second;
+      queue<pair<int,int>> q;
+      vector<vector<bool>> visited(h,vector<bool>(w,false));
+      q.push({start_x,start_y});
+      while(q.size()){
+        auto[X,Y]=q.front();
+        q.pop();
+        if(X==end_x&&Y==end_y){
+          cout<<"Yes";
+          return 0;
+        }
+        for(int k=0;k<4;k++){
+          int a=X+di[k],b=Y+dj[k];
+          if(0<=a&&a<h&&0<=b&&b<w&&c[a][b]=='.'&&visited[a][b]==false){
+            visited[a][b]=true;
+            q.push({a,b});
+          }
+        }
+      }
+    }
+  }
+  cout<<"No";
+  
+  
+}
