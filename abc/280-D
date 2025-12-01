@@ -1,0 +1,49 @@
+280-D
+
+ポイント
+この問題はN!がKの倍数になればよいのでKの約数がN!に全部存在することになる。その中で最小のNを見つければよい。
+具体的には、まずKを素因数分解し約数とその個数を求める。
+その次にそれぞれの約数について、Nがある値以上になったらKの約数pの個数mを上回るのでそのNを求める。まずx=p(約数)を入れる。
+そのあとのxが持つpの約数を加算する。そしてx+=pをしてこの処理を繰り返す。Kが持つ約数の個数を超えたらそのxの値が約数pをm個持つ場合の最小の数になる。
+この方法は一番小さい約数2の時でも2^60～＝10^18なので十分に間に合う。
+
+#include<iostream>
+#include<map>
+#include<vector>
+using namespace std;
+int main(){
+  long long k,r;
+  cin>>k;
+  r=k;
+  map<long long,long long> p;
+  vector<long long> t;
+  for(long long i=2;i*i<=k;i++){
+    while(r%i==0){
+      if(p[i]==0) t.push_back(i);
+      p[i]++;
+      r/=i;
+    }
+  }
+  long long ans=0;
+  if(r!=1) t.push_back(r);
+  if((int)t.size()==0){
+    cout<<k<<endl;
+    return 0;
+  }
+  for(long long i=0;i<(int)t.size();i++){
+    long long tmp=t[i],o=t[i],cnt=0;
+    while(true){
+      while(tmp%t[i]==0){
+        cnt++;
+        tmp/=t[i];
+      }
+      if(cnt>=p[t[i]]){
+        ans=max(ans,o);
+        break;
+      }
+      o+=t[i];
+      tmp=o;
+    }
+  }
+  cout<<ans<<endl;
+}
